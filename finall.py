@@ -24,6 +24,7 @@ sys.setrecursionlimit(10**6)
 #############*****************************************************************************************#############
 
 #np.random.seed(1)
+#user should change these values in order to achive desire foam
 alpha, beta, gama, zeta, resize_factor, gam_zaviye = 1, 2, 1, 3, 1, np.pi/12
 length_x_box, length_y_box, length_z_box = 100, 100, 100
 tedad_halaty_ke_baraye_har_koreMarja_test_shavad = 144
@@ -32,7 +33,7 @@ r_spheres, all_coordinates, list_ref_spheres, refrences= [], [], [],[]
 volume_sphere = []
 r_min, r_max, r_ref = 3, 7, 0
 
-
+#this function has to benefists for us: 1) can investigate in the L list in order to check for overlap 2)check for if somthing exists in a list
 def investigate_all_elements(list, exist=False):
     All_is_possitive = True
     Most_Negative_L = None
@@ -53,6 +54,7 @@ def investigate_all_elements(list, exist=False):
                 Already_exist = True
     return All_is_possitive, Most_Negative_L , Already_exist
 
+#append each refrence sphere cordinate in a list
 def choose_RefSphere_randomly(all_coordinates,list_ref_spheres):
     iterates = 1
     index_tasadofy = np.random.randint(0,len(all_coordinates))
@@ -69,6 +71,7 @@ def choose_RefSphere_randomly(all_coordinates,list_ref_spheres):
         else:
             return (choose_RefSphere_randomly(all_coordinates,list_ref_spheres))
 
+#this function generate random numbers for x,y,z and radius for new spheres
 def find_coordinate(length_x_box, length_y_box, length_z_box, r_max):
     new_x = np.random.uniform(0, length_x_box)
     new_y = np.random.uniform(0, length_y_box)
@@ -76,6 +79,7 @@ def find_coordinate(length_x_box, length_y_box, length_z_box, r_max):
     new_r = np.random.uniform(0.5*r_max, r_max)
     return new_x, new_y, new_z, new_r
 
+#this function generate random numbers for x,y,z and radius for refrence spheres
 def find_coordinate2(length_x_box, length_y_box, length_z_box, x_ref, y_ref, r_min, r_max, alpha, beta, zeta):
     new_r = np.random.uniform(r_min, 0.5*r_max)
     dr_min = (new_r + r_ref) * alpha
@@ -96,6 +100,7 @@ def find_coordinate2(length_x_box, length_y_box, length_z_box, x_ref, y_ref, r_m
             continue
     return new_x, new_y, new_z, new_r
 
+#gerenerate L as the formule mentioned in the doc
 def Produce_list_L(new_x, new_y, new_z, new_r, all_coordinates, gama):
     for k in range(len(all_coordinates)):
         L = np.sqrt((new_x - all_coordinates[k][0]) ** 2 + (new_y - all_coordinates[k][1]) ** 2
@@ -103,6 +108,7 @@ def Produce_list_L(new_x, new_y, new_z, new_r, all_coordinates, gama):
         list_L.append(L)
     return list_L
 
+#checks overlap depends on the method mentioned in document
 def overlap_cheker(new_x, new_y, new_z, new_r, all_coordinates, gama, r_min):
     global list_L
     list_L = []
@@ -126,10 +132,11 @@ def overlap_cheker(new_x, new_y, new_z, new_r, all_coordinates, gama, r_min):
 
     return  x_center_spheres, y_center_spheres, z_center_spheres, r_spheres, volume_sphere, all_coordinates
 
-
+#here the major algoritm starts
 tedad_kore_marja = 30
 print("The times that the Algoritm will choose refrence spheres =", tedad_kore_marja)
 for i in range(tedad_kore_marja):
+    #generate first sphere coordinate
     if not all_coordinates:
         r = np.random.uniform(r_min, r_max)
         x,y,z = 0,0,0
@@ -144,6 +151,7 @@ for i in range(tedad_kore_marja):
         all_coordinates.append([x_center_spheres[0] , y_center_spheres[0] , z_center_spheres[0] , r])
 
     else:
+        #generate possible spheres around the refrence sphere
         for j in range (tedad_halaty_ke_baraye_har_koreMarja_test_shavad):
             if j == tedad_halaty_ke_baraye_har_koreMarja_test_shavad - 1:
                 print i*100/tedad_kore_marja, "% of spheres generated"
